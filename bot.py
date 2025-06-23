@@ -1,6 +1,3 @@
-### 🔧 `bot.py`
-
-##```python
 import os, logging, asyncio
 from datetime import datetime
 from telegram import Bot
@@ -11,8 +8,8 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv("8093844481:AAHb6mAN_DI_wQpfcNWnvr26WUkbX6AGq04")
-CHAT_ID = "@ukraine_diary_bot"
+TOKEN = os.getenv("BOT_TOKEN")  # з .env
+CHAT_ID = None  # буде записано після /start
 
 def parse_rada():
     url = "https://zakon.rada.gov.ua/laws/latest"

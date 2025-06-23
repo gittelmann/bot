@@ -8,8 +8,8 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")  # з .env
-CHAT_ID = None  # буде записано після /start
+TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = None
 
 def parse_rada():
     url = "https://zakon.rada.gov.ua/laws/latest"
@@ -71,7 +71,7 @@ async def send_digest(bot: Bot):
     else:
         logging.warning("No CHAT_ID registered")
 
-def main():
+async def main():
     logging.basicConfig(level=logging.INFO)
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
@@ -81,7 +81,7 @@ def main():
                       trigger="cron", day_of_week="mon", hour=9, minute=0)
     scheduler.start()
 
-    app.run_polling()
+    await app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

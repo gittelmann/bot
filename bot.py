@@ -1,6 +1,6 @@
 import os, logging, asyncio
 from datetime import datetime
-from telegram import Bot
+from telegram import Bot, Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import requests
@@ -62,6 +62,11 @@ async def start(update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Бот активовано. Щопонеділка надсилатиметься дайджест.")
     logging.info(f"Activated chat_id={CHAT_ID}")
 
+async def digest(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = build_digest()
+    await update.message.reply_text(text, parse_mode="Markdown", disable_web_page_preview=True)
+    logging.info("Manual digest sent")
+
 async def send_digest(bot: Bot):
     if CHAT_ID:
         text = build_digest()
@@ -75,6 +80,7 @@ async def main():
     logging.basicConfig(level=logging.INFO)
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("digest", digest))
 
     scheduler = AsyncIOScheduler(timezone="Europe/Kyiv")
     scheduler.add_job(lambda: asyncio.create_task(send_digest(app.bot)),

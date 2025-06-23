@@ -1,5 +1,6 @@
-import os, logging, asyncio
-from datetime import datetime
+import os
+import logging
+import asyncio
 from telegram import Bot, Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -9,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = None
+CHAT_ID = None  # збережемо id чату після /start
 
 def parse_rada():
     url = "https://zakon.rada.gov.ua/laws/latest"
@@ -56,10 +57,10 @@ def build_digest():
     lines.append("\nНаступне оновлення — у понеділок.")
     return "\n".join(lines)
 
-async def start(update, context: ContextTypes.DEFAULT_TYPE):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global CHAT_ID
     CHAT_ID = update.effective_chat.id
-    await update.message.reply_text("Бот активовано. Щопонеділка надсилатиметься дайджест.")
+    await update.message.reply_text("Бот активовано. Щопонеділка буде дайджест.")
     logging.info(f"Activated chat_id={CHAT_ID}")
 
 async def digest(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -90,4 +91,6 @@ async def main():
     await app.run_polling()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import nest_asyncio
+    nest_asyncio.apply()
+    asyncio.get_event_loop().run_until_complete(main())
